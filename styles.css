@@ -313,7 +313,7 @@ body {
     color: var(--text-muted);
     pointer-events: none;
     transition: var(--transition-smooth);
-    background: var(--surface);
+    background: transparent;
     padding: 0 4px;
 }
 
@@ -362,6 +362,7 @@ body {
     font-size: 10px;
     color: var(--primary);
     font-weight: 500;
+    background: var(--surface);
 }
 
 .input-group input:not(:focus):not(:placeholder-shown) ~ label,
