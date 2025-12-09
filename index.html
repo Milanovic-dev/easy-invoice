@@ -10,210 +10,248 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">✨</span>
-                <h1>Dreamwork</h1>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">✨</span>
+                    <h1>Dreamwork</h1>
+                </div>
+                <p class="tagline">Invoices that feel like a dream</p>
             </div>
-            <p class="tagline">Invoices that feel like a dream</p>
-            <button type="button" id="prefill-btn" class="prefill-btn">Fill Sample Data</button>
-        </header>
 
-        <!-- Main Form -->
-        <main class="main-content">
-            <form id="invoice-form" class="invoice-form">
-
-                <!-- From Section -->
-                <section class="form-section from-section">
-                    <div class="section-header">
-                        <span class="section-icon">👤</span>
-                        <h2>From</h2>
+            <div class="templates-section">
+                <div class="templates-header">
+                    <h3>📋 Templates</h3>
+                </div>
+                <div id="templates-list" class="templates-list">
+                    <!-- Templates will be added here dynamically -->
+                    <div class="no-templates" id="no-templates">
+                        <p>No saved templates yet</p>
+                        <span>Fill the form and save it as a template</span>
                     </div>
-                    <div class="section-content">
-                        <div class="input-group full-width">
-                            <input type="text" id="from-name" name="from-name" required>
-                            <label for="from-name">Your Name / Company</label>
+                </div>
+                <button type="button" id="save-template-btn" class="save-template-btn">
+                    <span>+ Save as Template</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <main class="main-content">
+                <form id="invoice-form" class="invoice-form">
+
+                    <!-- From Section -->
+                    <section class="form-section from-section">
+                        <div class="section-header">
+                            <span class="section-icon">👤</span>
+                            <h2>From</h2>
                         </div>
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="email" id="from-email" name="from-email" required>
-                                <label for="from-email">Email</label>
+                        <div class="section-content">
+                            <div class="input-group full-width">
+                                <input type="text" id="from-name" name="from-name" required>
+                                <label for="from-name">Your Name / Company</label>
                             </div>
-                            <div class="input-group">
-                                <input type="tel" id="from-phone" name="from-phone">
-                                <label for="from-phone">Phone</label>
-                            </div>
-                        </div>
-                        <div class="input-group full-width">
-                            <textarea id="from-address" name="from-address" rows="2"></textarea>
-                            <label for="from-address">Address</label>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- To Section -->
-                <section class="form-section to-section">
-                    <div class="section-header">
-                        <span class="section-icon">📨</span>
-                        <h2>Bill To</h2>
-                    </div>
-                    <div class="section-content">
-                        <div class="input-group full-width">
-                            <input type="text" id="to-name" name="to-name" required>
-                            <label for="to-name">Client Name / Company</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="email" id="to-email" name="to-email">
-                            <label for="to-email">Client Email</label>
-                        </div>
-                        <div class="input-group full-width">
-                            <textarea id="to-address" name="to-address" rows="2"></textarea>
-                            <label for="to-address">Client Address</label>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Invoice Details -->
-                <section class="form-section details-section">
-                    <div class="section-header">
-                        <span class="section-icon">📄</span>
-                        <h2>Invoice Details</h2>
-                    </div>
-                    <div class="section-content">
-                        <div class="form-row three-col">
-                            <div class="input-group">
-                                <input type="text" id="invoice-number" name="invoice-number" required>
-                                <label for="invoice-number">Invoice #</label>
-                            </div>
-                            <div class="input-group">
-                                <input type="date" id="invoice-date" name="invoice-date" required>
-                                <label for="invoice-date" class="date-label">Issue Date</label>
-                            </div>
-                            <div class="input-group">
-                                <input type="date" id="due-date" name="due-date" required>
-                                <label for="due-date" class="date-label">Due Date</label>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Line Items -->
-                <section class="form-section items-section">
-                    <div class="section-header">
-                        <span class="section-icon">📝</span>
-                        <h2>Items</h2>
-                    </div>
-                    <div class="section-content">
-                        <div class="items-header">
-                            <span class="item-desc-header">Description</span>
-                            <span class="item-qty-header">Qty</span>
-                            <span class="item-price-header">Price</span>
-                            <span class="item-total-header">Total</span>
-                            <span class="item-action-header"></span>
-                        </div>
-                        <div id="line-items" class="line-items">
-                            <!-- Line items will be added here dynamically -->
-                        </div>
-                        <button type="button" id="add-item-btn" class="add-item-btn">
-                            <span class="btn-icon">+</span>
-                            <span>Add Item</span>
-                        </button>
-                    </div>
-                </section>
-
-                <!-- Totals & Tax -->
-                <section class="form-section totals-section">
-                    <div class="totals-container">
-                        <div class="totals-row subtotal-row">
-                            <span class="totals-label">Subtotal</span>
-                            <span class="totals-value" id="subtotal">$0.00</span>
-                        </div>
-                        <div class="totals-row tax-row">
-                            <div class="tax-input-wrapper">
-                                <span class="totals-label">Tax</span>
-                                <div class="tax-input-group">
-                                    <input type="number" id="tax-rate" name="tax-rate" value="0" min="0" max="100" step="0.1">
-                                    <span class="tax-percent">%</span>
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <input type="email" id="from-email" name="from-email" required>
+                                    <label for="from-email">Email</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="tel" id="from-phone" name="from-phone">
+                                    <label for="from-phone">Phone</label>
                                 </div>
                             </div>
-                            <span class="totals-value" id="tax-amount">$0.00</span>
+                            <div class="input-group full-width">
+                                <textarea id="from-address" name="from-address" rows="2"></textarea>
+                                <label for="from-address">Address</label>
+                            </div>
                         </div>
-                        <div class="totals-row total-row">
-                            <span class="totals-label">Total</span>
-                            <span class="totals-value" id="total">$0.00</span>
-                        </div>
-                    </div>
-                </section>
+                    </section>
 
-                <!-- Bank Details (Optional) -->
-                <section class="form-section bank-section">
-                    <div class="section-header">
-                        <span class="section-icon">🏦</span>
-                        <h2>Bank Details <span class="optional-tag">Optional</span></h2>
-                    </div>
-                    <div class="section-content">
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="text" id="bank-name" name="bank-name">
-                                <label for="bank-name">Bank Name</label>
+                    <!-- To Section -->
+                    <section class="form-section to-section">
+                        <div class="section-header">
+                            <span class="section-icon">📨</span>
+                            <h2>Bill To</h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="input-group full-width">
+                                <input type="text" id="to-name" name="to-name" required>
+                                <label for="to-name">Client Name / Company</label>
                             </div>
                             <div class="input-group">
-                                <input type="text" id="bank-account-name" name="bank-account-name">
-                                <label for="bank-account-name">Account Name</label>
+                                <input type="email" id="to-email" name="to-email">
+                                <label for="to-email">Client Email</label>
+                            </div>
+                            <div class="input-group full-width">
+                                <textarea id="to-address" name="to-address" rows="2"></textarea>
+                                <label for="to-address">Client Address</label>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="text" id="bank-iban" name="bank-iban">
-                                <label for="bank-iban">IBAN</label>
-                            </div>
-                            <div class="input-group">
-                                <input type="text" id="bank-swift" name="bank-swift">
-                                <label for="bank-swift">SWIFT / BIC</label>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                    </section>
 
-                <!-- Notes -->
-                <section class="form-section notes-section">
-                    <div class="section-header">
-                        <span class="section-icon">💬</span>
-                        <h2>Notes</h2>
-                    </div>
-                    <div class="section-content">
-                        <div class="input-group full-width">
-                            <textarea id="notes" name="notes" rows="3" placeholder="Payment terms, thank you message, or any additional notes..."></textarea>
+                    <!-- Invoice Details -->
+                    <section class="form-section details-section">
+                        <div class="section-header">
+                            <span class="section-icon">📄</span>
+                            <h2>Invoice Details</h2>
                         </div>
-                    </div>
-                </section>
+                        <div class="section-content">
+                            <div class="form-row three-col">
+                                <div class="input-group">
+                                    <input type="text" id="invoice-number" name="invoice-number" required>
+                                    <label for="invoice-number">Invoice #</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="date" id="invoice-date" name="invoice-date" required>
+                                    <label for="invoice-date" class="date-label">Issue Date</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="date" id="due-date" name="due-date" required>
+                                    <label for="due-date" class="date-label">Due Date</label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-                <!-- Generate Button -->
-                <div class="form-actions">
-                    <button type="button" id="generate-pdf-btn" class="generate-btn" disabled>
-                        <span class="btn-content">
-                            <span class="btn-icon-wrapper">
-                                <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="7 10 12 15 17 10"/>
-                                    <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>
+                    <!-- Line Items -->
+                    <section class="form-section items-section">
+                        <div class="section-header">
+                            <span class="section-icon">📝</span>
+                            <h2>Items</h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="items-header">
+                                <span class="item-desc-header">Description</span>
+                                <span class="item-qty-header">Qty</span>
+                                <span class="item-price-header">Price</span>
+                                <span class="item-total-header">Total</span>
+                                <span class="item-action-header"></span>
+                            </div>
+                            <div id="line-items" class="line-items">
+                                <!-- Line items will be added here dynamically -->
+                            </div>
+                            <button type="button" id="add-item-btn" class="add-item-btn">
+                                <span class="btn-icon">+</span>
+                                <span>Add Item</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Totals & Tax -->
+                    <section class="form-section totals-section">
+                        <div class="totals-container">
+                            <div class="totals-row subtotal-row">
+                                <span class="totals-label">Subtotal</span>
+                                <span class="totals-value" id="subtotal">$0.00</span>
+                            </div>
+                            <div class="totals-row tax-row">
+                                <div class="tax-input-wrapper">
+                                    <span class="totals-label">Tax</span>
+                                    <div class="tax-input-group">
+                                        <input type="number" id="tax-rate" name="tax-rate" value="0" min="0" max="100" step="0.1">
+                                        <span class="tax-percent">%</span>
+                                    </div>
+                                </div>
+                                <span class="totals-value" id="tax-amount">$0.00</span>
+                            </div>
+                            <div class="totals-row total-row">
+                                <span class="totals-label">Total</span>
+                                <span class="totals-value" id="total">$0.00</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Bank Details (Optional) -->
+                    <section class="form-section bank-section">
+                        <div class="section-header">
+                            <span class="section-icon">🏦</span>
+                            <h2>Bank Details <span class="optional-tag">Optional</span></h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <input type="text" id="bank-name" name="bank-name">
+                                    <label for="bank-name">Bank Name</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" id="bank-account-name" name="bank-account-name">
+                                    <label for="bank-account-name">Account Name</label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <input type="text" id="bank-iban" name="bank-iban">
+                                    <label for="bank-iban">IBAN</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" id="bank-swift" name="bank-swift">
+                                    <label for="bank-swift">SWIFT / BIC</label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Notes -->
+                    <section class="form-section notes-section">
+                        <div class="section-header">
+                            <span class="section-icon">💬</span>
+                            <h2>Notes</h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="input-group full-width">
+                                <textarea id="notes" name="notes" rows="3" placeholder="Payment terms, thank you message, or any additional notes..."></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Generate Button -->
+                    <div class="form-actions">
+                        <button type="button" id="generate-pdf-btn" class="generate-btn" disabled>
+                            <span class="btn-content">
+                                <span class="btn-icon-wrapper">
+                                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </span>
+                                <span>Generate PDF</span>
                             </span>
-                            <span>Generate PDF</span>
-                        </span>
-                        <span class="btn-shimmer"></span>
-                    </button>
+                            <span class="btn-shimmer"></span>
+                        </button>
+                    </div>
+
+                </form>
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>Made with ✨ by Dreamwork</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="template-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Template</h3>
+                <button type="button" class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" id="template-name" placeholder="Enter template name...">
                 </div>
-
-            </form>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Made with ✨ by Dreamwork</p>
-        </footer>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="modal-cancel">Cancel</button>
+                <button type="button" class="btn-save" id="modal-save">Save Template</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

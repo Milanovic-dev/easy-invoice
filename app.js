@@ -18,6 +18,9 @@ function initializeApp() {
 
     // Setup event listeners
     setupEventListeners();
+
+    // Load templates from localStorage
+    loadTemplates();
 }
 
 // ===== Default Values =====
@@ -42,11 +45,6 @@ function generateInvoiceNumber() {
 
 // ===== Event Listeners =====
 function setupEventListeners() {
-    // Prefill button
-    document.getElementById('prefill-btn').addEventListener('click', () => {
-        prefillSampleData();
-    });
-
     // Add item button
     document.getElementById('add-item-btn').addEventListener('click', () => {
         addLineItem();
@@ -81,6 +79,24 @@ function setupEventListeners() {
         });
     });
 
+    // Template save button
+    document.getElementById('save-template-btn').addEventListener('click', () => {
+        openTemplateModal();
+    });
+
+    // Modal events
+    document.getElementById('modal-close').addEventListener('click', closeTemplateModal);
+    document.getElementById('modal-cancel').addEventListener('click', closeTemplateModal);
+    document.getElementById('modal-save').addEventListener('click', saveTemplate);
+    document.getElementById('template-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'template-modal') closeTemplateModal();
+    });
+
+    // Template name input - save on Enter
+    document.getElementById('template-name').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') saveTemplate();
+    });
+
     // Initial button state check
     updateButtonState();
 }
@@ -95,51 +111,6 @@ function updateButtonState() {
     const isValid = fromName && fromEmail && toName;
 
     btn.disabled = !isValid;
-}
-
-// ===== Sample Data Prefill =====
-function prefillSampleData() {
-    // From details
-    document.getElementById('from-name').value = 'Alex Developer';
-    document.getElementById('from-email').value = 'alex@devstudio.com';
-    document.getElementById('from-phone').value = '+1 (555) 123-4567';
-    document.getElementById('from-address').value = '123 Code Street\nSan Francisco, CA 94102';
-
-    // To details
-    document.getElementById('to-name').value = 'TechCorp Inc.';
-    document.getElementById('to-email').value = 'billing@techcorp.com';
-    document.getElementById('to-address').value = '456 Innovation Ave\nNew York, NY 10001';
-
-    // Bank details
-    document.getElementById('bank-name').value = 'First National Bank';
-    document.getElementById('bank-account-name').value = 'Alex Developer';
-    document.getElementById('bank-iban').value = 'US12 3456 7890 1234 5678 90';
-    document.getElementById('bank-swift').value = 'FNBKUS33';
-
-    // Notes
-    document.getElementById('notes').value = 'Payment due within 30 days. Thank you for your business!';
-
-    // Tax
-    document.getElementById('tax-rate').value = '10';
-
-    // Clear existing line items and add sample ones
-    const lineItems = document.getElementById('line-items');
-    lineItems.innerHTML = '';
-    lineItemCount = 0;
-
-    addLineItem('Frontend Development - React Dashboard', 40, 150);
-    addLineItem('Backend API Development - Node.js', 32, 150);
-    addLineItem('Database Design & Optimization', 16, 175);
-    addLineItem('Code Review & Documentation', 8, 125);
-
-    // Update totals and button state
-    calculateTotals();
-    updateButtonState();
-
-    // Trigger input events to update floating labels
-    document.querySelectorAll('.input-group input, .input-group textarea').forEach(input => {
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-    });
 }
 
 // ===== Line Items Management =====
@@ -642,6 +613,191 @@ function showSuccessAnimation() {
         btn.innerHTML = originalContent;
         btn.style.background = '';
     }, 2000);
+}
+
+// ===== Template Management =====
+const TEMPLATES_STORAGE_KEY = 'dreamwork-invoice-templates';
+
+function loadTemplates() {
+    renderTemplates();
+}
+
+function getTemplates() {
+    try {
+        const templates = localStorage.getItem(TEMPLATES_STORAGE_KEY);
+        return templates ? JSON.parse(templates) : [];
+    } catch (e) {
+        console.error('Error loading templates:', e);
+        return [];
+    }
+}
+
+function saveTemplates(templates) {
+    try {
+        localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
+    } catch (e) {
+        console.error('Error saving templates:', e);
+    }
+}
+
+function renderTemplates() {
+    const templates = getTemplates();
+    const templatesList = document.getElementById('templates-list');
+    const noTemplates = document.getElementById('no-templates');
+
+    // Clear existing templates (keep no-templates div)
+    const existingItems = templatesList.querySelectorAll('.template-item');
+    existingItems.forEach(item => item.remove());
+
+    if (templates.length === 0) {
+        noTemplates.style.display = 'block';
+        return;
+    }
+
+    noTemplates.style.display = 'none';
+
+    templates.forEach(template => {
+        const item = document.createElement('div');
+        item.className = 'template-item';
+        item.dataset.id = template.id;
+
+        item.innerHTML = `
+            <div class="template-info" onclick="loadTemplate('${template.id}')">
+                <span class="template-name">${escapeHtml(template.name)}</span>
+                <span class="template-date">${formatDisplayDate(template.createdAt)}</span>
+            </div>
+            <button type="button" class="template-delete" onclick="deleteTemplate('${template.id}')" title="Delete template">×</button>
+        `;
+
+        templatesList.appendChild(item);
+    });
+}
+
+function openTemplateModal() {
+    const modal = document.getElementById('template-modal');
+    const input = document.getElementById('template-name');
+    modal.classList.add('active');
+    input.value = '';
+    input.focus();
+}
+
+function closeTemplateModal() {
+    const modal = document.getElementById('template-modal');
+    modal.classList.remove('active');
+}
+
+function saveTemplate() {
+    const nameInput = document.getElementById('template-name');
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        nameInput.classList.add('shake');
+        setTimeout(() => nameInput.classList.remove('shake'), 300);
+        return;
+    }
+
+    const templates = getTemplates();
+    const formData = gatherFormData();
+
+    // Create template object (excluding calculated fields)
+    const template = {
+        id: 'tpl-' + Date.now(),
+        name: name,
+        createdAt: new Date().toISOString().split('T')[0],
+        data: {
+            fromName: formData.fromName,
+            fromEmail: formData.fromEmail,
+            fromPhone: formData.fromPhone,
+            fromAddress: formData.fromAddress,
+            toName: formData.toName,
+            toEmail: formData.toEmail,
+            toAddress: formData.toAddress,
+            taxRate: formData.taxRate,
+            notes: formData.notes,
+            bankName: formData.bankName,
+            bankAccountName: formData.bankAccountName,
+            bankIban: formData.bankIban,
+            bankSwift: formData.bankSwift,
+            items: formData.items
+        }
+    };
+
+    templates.unshift(template); // Add to beginning
+    saveTemplates(templates);
+    renderTemplates();
+    closeTemplateModal();
+
+    // Show success feedback
+    const saveBtn = document.getElementById('save-template-btn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<span>✓ Saved!</span>';
+    saveBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.style.background = '';
+    }, 1500);
+}
+
+function loadTemplate(id) {
+    const templates = getTemplates();
+    const template = templates.find(t => t.id === id);
+
+    if (!template) return;
+
+    const data = template.data;
+
+    // Fill form fields
+    document.getElementById('from-name').value = data.fromName || '';
+    document.getElementById('from-email').value = data.fromEmail || '';
+    document.getElementById('from-phone').value = data.fromPhone || '';
+    document.getElementById('from-address').value = data.fromAddress || '';
+    document.getElementById('to-name').value = data.toName || '';
+    document.getElementById('to-email').value = data.toEmail || '';
+    document.getElementById('to-address').value = data.toAddress || '';
+    document.getElementById('tax-rate').value = data.taxRate || 0;
+    document.getElementById('notes').value = data.notes || '';
+    document.getElementById('bank-name').value = data.bankName || '';
+    document.getElementById('bank-account-name').value = data.bankAccountName || '';
+    document.getElementById('bank-iban').value = data.bankIban || '';
+    document.getElementById('bank-swift').value = data.bankSwift || '';
+
+    // Load line items if present
+    if (data.items && data.items.length > 0) {
+        const lineItems = document.getElementById('line-items');
+        lineItems.innerHTML = '';
+        lineItemCount = 0;
+
+        data.items.forEach(item => {
+            addLineItem(item.description, item.quantity, item.price);
+        });
+    }
+
+    // Update totals and button state
+    calculateTotals();
+    updateButtonState();
+
+    // Trigger input events to update floating labels
+    document.querySelectorAll('.input-group input, .input-group textarea').forEach(input => {
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    // Highlight the selected template
+    document.querySelectorAll('.template-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.querySelector(`.template-item[data-id="${id}"]`)?.classList.add('active');
+
+    // Scroll to form
+    document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteTemplate(id) {
+    if (!confirm('Delete this template?')) return;
+
+    const templates = getTemplates();
+    const updatedTemplates = templates.filter(t => t.id !== id);
+    saveTemplates(updatedTemplates);
+    renderTemplates();
 }
 
 // ===== Utility Functions =====
