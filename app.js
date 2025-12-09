@@ -42,6 +42,11 @@ function generateInvoiceNumber() {
 
 // ===== Event Listeners =====
 function setupEventListeners() {
+    // Prefill button
+    document.getElementById('prefill-btn').addEventListener('click', () => {
+        prefillSampleData();
+    });
+
     // Add item button
     document.getElementById('add-item-btn').addEventListener('click', () => {
         addLineItem();
@@ -90,6 +95,51 @@ function updateButtonState() {
     const isValid = fromName && fromEmail && toName;
 
     btn.disabled = !isValid;
+}
+
+// ===== Sample Data Prefill =====
+function prefillSampleData() {
+    // From details
+    document.getElementById('from-name').value = 'Alex Developer';
+    document.getElementById('from-email').value = 'alex@devstudio.com';
+    document.getElementById('from-phone').value = '+1 (555) 123-4567';
+    document.getElementById('from-address').value = '123 Code Street\nSan Francisco, CA 94102';
+
+    // To details
+    document.getElementById('to-name').value = 'TechCorp Inc.';
+    document.getElementById('to-email').value = 'billing@techcorp.com';
+    document.getElementById('to-address').value = '456 Innovation Ave\nNew York, NY 10001';
+
+    // Bank details
+    document.getElementById('bank-name').value = 'First National Bank';
+    document.getElementById('bank-account-name').value = 'Alex Developer';
+    document.getElementById('bank-iban').value = 'US12 3456 7890 1234 5678 90';
+    document.getElementById('bank-swift').value = 'FNBKUS33';
+
+    // Notes
+    document.getElementById('notes').value = 'Payment due within 30 days. Thank you for your business!';
+
+    // Tax
+    document.getElementById('tax-rate').value = '10';
+
+    // Clear existing line items and add sample ones
+    const lineItems = document.getElementById('line-items');
+    lineItems.innerHTML = '';
+    lineItemCount = 0;
+
+    addLineItem('Frontend Development - React Dashboard', 40, 150);
+    addLineItem('Backend API Development - Node.js', 32, 150);
+    addLineItem('Database Design & Optimization', 16, 175);
+    addLineItem('Code Review & Documentation', 8, 125);
+
+    // Update totals and button state
+    calculateTotals();
+    updateButtonState();
+
+    // Trigger input events to update floating labels
+    document.querySelectorAll('.input-group input, .input-group textarea').forEach(input => {
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
 }
 
 // ===== Line Items Management =====
