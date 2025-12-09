@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -32,31 +32,23 @@
                         <h2>From</h2>
                     </div>
                     <div class="section-content">
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="text" id="from-name" name="from-name" required>
-                                <label for="from-name">Your Name / Company</label>
-                                <div class="input-highlight"></div>
-                            </div>
+                        <div class="input-group full-width">
+                            <input type="text" id="from-name" name="from-name" required>
+                            <label for="from-name">Your Name / Company</label>
                         </div>
                         <div class="form-row">
                             <div class="input-group">
                                 <input type="email" id="from-email" name="from-email" required>
                                 <label for="from-email">Email</label>
-                                <div class="input-highlight"></div>
                             </div>
                             <div class="input-group">
                                 <input type="tel" id="from-phone" name="from-phone">
                                 <label for="from-phone">Phone</label>
-                                <div class="input-highlight"></div>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="input-group full-width">
-                                <textarea id="from-address" name="from-address" rows="2"></textarea>
-                                <label for="from-address">Address</label>
-                                <div class="input-highlight"></div>
-                            </div>
+                        <div class="input-group full-width">
+                            <textarea id="from-address" name="from-address" rows="2"></textarea>
+                            <label for="from-address">Address</label>
                         </div>
                     </div>
                 </section>
@@ -68,26 +60,17 @@
                         <h2>Bill To</h2>
                     </div>
                     <div class="section-content">
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="text" id="to-name" name="to-name" required>
-                                <label for="to-name">Client Name / Company</label>
-                                <div class="input-highlight"></div>
-                            </div>
+                        <div class="input-group full-width">
+                            <input type="text" id="to-name" name="to-name" required>
+                            <label for="to-name">Client Name / Company</label>
                         </div>
-                        <div class="form-row">
-                            <div class="input-group">
-                                <input type="email" id="to-email" name="to-email">
-                                <label for="to-email">Client Email</label>
-                                <div class="input-highlight"></div>
-                            </div>
+                        <div class="input-group">
+                            <input type="email" id="to-email" name="to-email">
+                            <label for="to-email">Client Email</label>
                         </div>
-                        <div class="form-row">
-                            <div class="input-group full-width">
-                                <textarea id="to-address" name="to-address" rows="2"></textarea>
-                                <label for="to-address">Client Address</label>
-                                <div class="input-highlight"></div>
-                            </div>
+                        <div class="input-group full-width">
+                            <textarea id="to-address" name="to-address" rows="2"></textarea>
+                            <label for="to-address">Client Address</label>
                         </div>
                     </div>
                 </section>
@@ -103,17 +86,14 @@
                             <div class="input-group">
                                 <input type="text" id="invoice-number" name="invoice-number" required>
                                 <label for="invoice-number">Invoice #</label>
-                                <div class="input-highlight"></div>
                             </div>
                             <div class="input-group">
                                 <input type="date" id="invoice-date" name="invoice-date" required>
                                 <label for="invoice-date" class="date-label">Issue Date</label>
-                                <div class="input-highlight"></div>
                             </div>
                             <div class="input-group">
                                 <input type="date" id="due-date" name="due-date" required>
                                 <label for="due-date" class="date-label">Due Date</label>
-                                <div class="input-highlight"></div>
                             </div>
                         </div>
                     </div>
@@ -178,24 +158,20 @@
                             <div class="input-group">
                                 <input type="text" id="bank-name" name="bank-name">
                                 <label for="bank-name">Bank Name</label>
-                                <div class="input-highlight"></div>
                             </div>
                             <div class="input-group">
                                 <input type="text" id="bank-account-name" name="bank-account-name">
                                 <label for="bank-account-name">Account Name</label>
-                                <div class="input-highlight"></div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="input-group">
                                 <input type="text" id="bank-iban" name="bank-iban">
                                 <label for="bank-iban">IBAN</label>
-                                <div class="input-highlight"></div>
                             </div>
                             <div class="input-group">
                                 <input type="text" id="bank-swift" name="bank-swift">
                                 <label for="bank-swift">SWIFT / BIC</label>
-                                <div class="input-highlight"></div>
                             </div>
                         </div>
                     </div>
@@ -210,7 +186,6 @@
                     <div class="section-content">
                         <div class="input-group full-width">
                             <textarea id="notes" name="notes" rows="3" placeholder="Payment terms, thank you message, or any additional notes..."></textarea>
-                            <div class="input-highlight"></div>
                         </div>
                     </div>
                 </section>
