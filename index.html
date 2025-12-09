@@ -166,6 +166,40 @@
                     </div>
                 </section>
 
+                <!-- Bank Details (Optional) -->
+                <section class="form-section bank-section">
+                    <div class="section-header">
+                        <span class="section-icon">🏦</span>
+                        <h2>Bank Details <span class="optional-tag">Optional</span></h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <input type="text" id="bank-name" name="bank-name">
+                                <label for="bank-name">Bank Name</label>
+                                <div class="input-highlight"></div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="bank-account-name" name="bank-account-name">
+                                <label for="bank-account-name">Account Name</label>
+                                <div class="input-highlight"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <input type="text" id="bank-iban" name="bank-iban">
+                                <label for="bank-iban">IBAN</label>
+                                <div class="input-highlight"></div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="bank-swift" name="bank-swift">
+                                <label for="bank-swift">SWIFT / BIC</label>
+                                <div class="input-highlight"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Notes -->
                 <section class="form-section notes-section">
                     <div class="section-header">
@@ -182,7 +216,7 @@
 
                 <!-- Generate Button -->
                 <div class="form-actions">
-                    <button type="button" id="generate-pdf-btn" class="generate-btn">
+                    <button type="button" id="generate-pdf-btn" class="generate-btn" disabled>
                         <span class="btn-content">
                             <span class="btn-icon-wrapper">
                                 <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

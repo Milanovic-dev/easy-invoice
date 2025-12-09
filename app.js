@@ -57,6 +57,14 @@ function setupEventListeners() {
         calculateTotals();
     });
 
+    // Required fields validation for button state
+    const requiredInputs = document.querySelectorAll('#from-name, #from-email, #to-name');
+    requiredInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            updateButtonState();
+        });
+    });
+
     // Form validation feedback
     const inputs = document.querySelectorAll('.input-group input, .input-group textarea');
     inputs.forEach(input => {
@@ -67,6 +75,21 @@ function setupEventListeners() {
             }, 300);
         });
     });
+
+    // Initial button state check
+    updateButtonState();
+}
+
+// ===== Button State Management =====
+function updateButtonState() {
+    const fromName = document.getElementById('from-name').value.trim();
+    const fromEmail = document.getElementById('from-email').value.trim();
+    const toName = document.getElementById('to-name').value.trim();
+
+    const btn = document.getElementById('generate-pdf-btn');
+    const isValid = fromName && fromEmail && toName;
+
+    btn.disabled = !isValid;
 }
 
 // ===== Line Items Management =====
@@ -388,16 +411,14 @@ function generatePDF() {
     y += 10;
 
     // Total
-    doc.setFillColor(...primaryColor);
-    doc.roundedRect(totalsX - 10, y - 5, 80, 14, 2, 2, 'F');
-
-    doc.setTextColor(255, 255, 255);
+    doc.setTextColor(...primaryColor);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.text('Total', totalsX, y + 4);
-    doc.text(formatCurrency(data.total), pageWidth - margin - 4, y + 4, { align: 'right' });
+    doc.setFontSize(12);
+    doc.text('Total', totalsX, y);
+    doc.setFontSize(14);
+    doc.text(formatCurrency(data.total), pageWidth - margin, y, { align: 'right' });
 
-    y += 20;
+    y += 15;
 
     // === Notes ===
     if (data.notes) {
@@ -417,10 +438,49 @@ function generatePDF() {
         });
     }
 
+    // === Bank Details ===
+    if (data.bankName || data.bankSwift || data.bankIban || data.bankAccountName) {
+        y += 10;
+        doc.setTextColor(...mutedColor);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.text('BANK DETAILS', margin, y);
+
+        y += 6;
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textColor);
+        doc.setFontSize(9);
+
+        if (data.bankName) {
+            doc.text(`Bank: ${data.bankName}`, margin, y);
+            y += 4;
+        }
+        if (data.bankAccountName) {
+            doc.text(`Account Name: ${data.bankAccountName}`, margin, y);
+            y += 4;
+        }
+        if (data.bankIban) {
+            doc.text(`IBAN: ${data.bankIban}`, margin, y);
+            y += 4;
+        }
+        if (data.bankSwift) {
+            doc.text(`SWIFT/BIC: ${data.bankSwift}`, margin, y);
+            y += 4;
+        }
+    }
+
+    // === Thank You Message ===
+    y += 15;
+    doc.setTextColor(...primaryColor);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Thank you for your business!', pageWidth / 2, y, { align: 'center' });
+
     // === Footer ===
     const footerY = doc.internal.pageSize.getHeight() - 15;
     doc.setFontSize(8);
     doc.setTextColor(...mutedColor);
+    doc.setFont('helvetica', 'normal');
     doc.text('Generated with Dreamwork Invoices', pageWidth / 2, footerY, { align: 'center' });
 
     // Save the PDF
@@ -469,7 +529,11 @@ function gatherFormData() {
         subtotal,
         taxAmount,
         total,
-        notes: document.getElementById('notes').value
+        notes: document.getElementById('notes').value,
+        bankName: document.getElementById('bank-name')?.value || '',
+        bankAccountName: document.getElementById('bank-account-name')?.value || '',
+        bankIban: document.getElementById('bank-iban')?.value || '',
+        bankSwift: document.getElementById('bank-swift')?.value || ''
     };
 }
 
