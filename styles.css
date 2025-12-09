@@ -134,7 +134,8 @@ body {
     grid-template-areas:
         "from to details"
         "items items items"
-        "notes notes totals"
+        "bank bank totals"
+        "notes notes notes"
         "actions actions actions";
     gap: 20px;
 }
@@ -146,7 +147,8 @@ body {
             "from to"
             "details details"
             "items items"
-            "notes totals"
+            "bank totals"
+            "notes notes"
             "actions actions";
     }
 }
@@ -160,6 +162,7 @@ body {
             "details"
             "items"
             "totals"
+            "bank"
             "notes"
             "actions";
     }
@@ -169,9 +172,18 @@ body {
 .to-section { grid-area: to; }
 .details-section { grid-area: details; }
 .items-section { grid-area: items; }
+.bank-section { grid-area: bank; }
 .notes-section { grid-area: notes; }
 .totals-section { grid-area: totals; }
 .form-actions { grid-area: actions; }
+
+/* Optional tag */
+.optional-tag {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 6px;
+}
 
 /* ===== Form Sections ===== */
 .form-section {
@@ -775,6 +787,22 @@ body {
 
 .generate-btn:active {
     transform: translateY(0) scale(0.98);
+}
+
+.generate-btn:disabled {
+    background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.generate-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.generate-btn:disabled .btn-shimmer {
+    display: none;
 }
 
 /* ===== Footer ===== */
