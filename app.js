@@ -215,7 +215,7 @@ function generatePDF() {
     }
 
     // PDF styling constants
-    const primaryColor = [99, 102, 241];
+    const primaryColor = [249, 115, 22];
     const textColor = [30, 27, 75];
     const mutedColor = [107, 114, 128];
     const pageWidth = doc.internal.pageSize.getWidth();
