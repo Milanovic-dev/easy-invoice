@@ -122,13 +122,14 @@ function updateButtonState() {
 // ===== Line Items Management =====
 let lineItemCount = 0;
 
-function addLineItem(description = '', quantity = 1, price = 0) {
+function addLineItem(description = '', quantity = 1, price = 0, hours = 0, hourlyRate = 0, isHourly = false) {
     const lineItems = document.getElementById('line-items');
     const itemId = ++lineItemCount;
 
     const lineItem = document.createElement('div');
     lineItem.className = 'line-item';
     lineItem.dataset.id = itemId;
+    lineItem.dataset.hourly = isHourly ? 'true' : 'false';
 
     lineItem.innerHTML = `
         <input type="text"
@@ -136,20 +137,43 @@ function addLineItem(description = '', quantity = 1, price = 0) {
                placeholder="Item description"
                value="${escapeHtml(description)}"
                data-field="description">
-        <input type="number"
-               class="item-qty"
-               placeholder="Qty"
-               value="${quantity}"
-               min="0"
-               step="1"
-               data-field="quantity">
-        <input type="number"
-               class="item-price"
-               placeholder="0.00"
-               value="${price || ''}"
-               min="0"
-               step="0.01"
-               data-field="price">
+        <div class="item-fields-container">
+            <div class="standard-fields ${isHourly ? 'hidden' : ''}">
+                <input type="number"
+                       class="item-qty"
+                       placeholder="Qty"
+                       value="${quantity}"
+                       min="0"
+                       step="1"
+                       data-field="quantity">
+                <input type="number"
+                       class="item-price"
+                       placeholder="0.00"
+                       value="${price || ''}"
+                       min="0"
+                       step="0.01"
+                       data-field="price">
+            </div>
+            <div class="hourly-fields ${isHourly ? '' : 'hidden'}">
+                <input type="number"
+                       class="item-hours"
+                       placeholder="Hours"
+                       value="${hours || ''}"
+                       min="0"
+                       step="0.25"
+                       data-field="hours">
+                <input type="number"
+                       class="item-rate"
+                       placeholder="Rate/hr"
+                       value="${hourlyRate || ''}"
+                       min="0"
+                       step="0.01"
+                       data-field="hourlyRate">
+            </div>
+        </div>
+        <button type="button" class="hourly-toggle ${isHourly ? 'active' : ''}" title="Toggle hourly billing">
+            <span class="toggle-icon">⏱</span>
+        </button>
         <span class="item-total">$0.00</span>
         <button type="button" class="remove-item-btn" title="Remove item">×</button>
     `;
@@ -157,14 +181,20 @@ function addLineItem(description = '', quantity = 1, price = 0) {
     // Setup line item events
     const qtyInput = lineItem.querySelector('.item-qty');
     const priceInput = lineItem.querySelector('.item-price');
+    const hoursInput = lineItem.querySelector('.item-hours');
+    const rateInput = lineItem.querySelector('.item-rate');
     const removeBtn = lineItem.querySelector('.remove-item-btn');
+    const hourlyToggle = lineItem.querySelector('.hourly-toggle');
 
     qtyInput.addEventListener('input', () => updateLineItemTotal(lineItem));
     priceInput.addEventListener('input', () => updateLineItemTotal(lineItem));
+    hoursInput.addEventListener('input', () => updateLineItemTotal(lineItem));
+    rateInput.addEventListener('input', () => updateLineItemTotal(lineItem));
     removeBtn.addEventListener('click', () => removeLineItem(lineItem));
+    hourlyToggle.addEventListener('click', () => toggleHourlyMode(lineItem));
 
     // Add focus animations
-    [qtyInput, priceInput, lineItem.querySelector('.item-description')].forEach(input => {
+    [qtyInput, priceInput, hoursInput, rateInput, lineItem.querySelector('.item-description')].forEach(input => {
         input.addEventListener('focus', () => {
             lineItem.style.transform = 'scale(1.01)';
         });
@@ -179,6 +209,29 @@ function addLineItem(description = '', quantity = 1, price = 0) {
     setTimeout(() => {
         lineItem.querySelector('.item-description').focus();
     }, 100);
+
+    updateLineItemTotal(lineItem);
+}
+
+function toggleHourlyMode(lineItem) {
+    const isHourly = lineItem.dataset.hourly === 'true';
+    const standardFields = lineItem.querySelector('.standard-fields');
+    const hourlyFields = lineItem.querySelector('.hourly-fields');
+    const toggleBtn = lineItem.querySelector('.hourly-toggle');
+
+    if (isHourly) {
+        // Switch to standard mode
+        lineItem.dataset.hourly = 'false';
+        standardFields.classList.remove('hidden');
+        hourlyFields.classList.add('hidden');
+        toggleBtn.classList.remove('active');
+    } else {
+        // Switch to hourly mode
+        lineItem.dataset.hourly = 'true';
+        standardFields.classList.add('hidden');
+        hourlyFields.classList.remove('hidden');
+        toggleBtn.classList.add('active');
+    }
 
     updateLineItemTotal(lineItem);
 }
@@ -203,9 +256,18 @@ function removeLineItem(lineItem) {
 }
 
 function updateLineItemTotal(lineItem) {
-    const qty = parseFloat(lineItem.querySelector('.item-qty').value) || 0;
-    const price = parseFloat(lineItem.querySelector('.item-price').value) || 0;
-    const total = qty * price;
+    const isHourly = lineItem.dataset.hourly === 'true';
+    let total;
+
+    if (isHourly) {
+        const hours = parseFloat(lineItem.querySelector('.item-hours').value) || 0;
+        const rate = parseFloat(lineItem.querySelector('.item-rate').value) || 0;
+        total = hours * rate;
+    } else {
+        const qty = parseFloat(lineItem.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(lineItem.querySelector('.item-price').value) || 0;
+        total = qty * price;
+    }
 
     lineItem.querySelector('.item-total').textContent = formatCurrency(total);
 
@@ -218,9 +280,17 @@ function calculateTotals() {
     let subtotal = 0;
 
     lineItems.forEach(item => {
-        const qty = parseFloat(item.querySelector('.item-qty').value) || 0;
-        const price = parseFloat(item.querySelector('.item-price').value) || 0;
-        subtotal += qty * price;
+        const isHourly = item.dataset.hourly === 'true';
+
+        if (isHourly) {
+            const hours = parseFloat(item.querySelector('.item-hours').value) || 0;
+            const rate = parseFloat(item.querySelector('.item-rate').value) || 0;
+            subtotal += hours * rate;
+        } else {
+            const qty = parseFloat(item.querySelector('.item-qty').value) || 0;
+            const price = parseFloat(item.querySelector('.item-price').value) || 0;
+            subtotal += qty * price;
+        }
     });
 
     const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
@@ -473,8 +543,8 @@ function generatePDFClassic(doc, data) {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.text('DESCRIPTION', margin + 4, y + 2);
-    doc.text('QTY', margin + 100, y + 2);
-    doc.text('PRICE', margin + 120, y + 2);
+    doc.text('QTY/HRS', margin + 95, y + 2);
+    doc.text('PRICE/RATE', margin + 120, y + 2);
     doc.text('TOTAL', pageWidth - margin - 4, y + 2, { align: 'right' });
 
     y += 12;
@@ -496,10 +566,18 @@ function generatePDFClassic(doc, data) {
             doc.rect(margin, y - 4, contentWidth, 8, 'F');
         }
 
-        const descLines = doc.splitTextToSize(item.description || 'Item', 85);
+        const descLines = doc.splitTextToSize(item.description || 'Item', 80);
         doc.text(descLines[0], margin + 4, y);
-        doc.text(item.quantity.toString(), margin + 100, y);
-        doc.text(formatCurrency(item.price), margin + 120, y);
+
+        if (item.isHourly) {
+            // Show hours and hourly rate
+            doc.text(item.hours.toString() + 'h', margin + 95, y);
+            doc.text(formatCurrency(item.hourlyRate) + '/hr', margin + 120, y);
+        } else {
+            // Show quantity and price
+            doc.text(item.quantity.toString(), margin + 95, y);
+            doc.text(formatCurrency(item.price), margin + 120, y);
+        }
         doc.text(formatCurrency(item.total), pageWidth - margin - 4, y, { align: 'right' });
 
         y += 8;
@@ -722,8 +800,8 @@ function generatePDFModern(doc, data) {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.text('DESCRIPTION', margin + 8, y + 8);
-    doc.text('QTY', margin + 105, y + 8);
-    doc.text('PRICE', margin + 125, y + 8);
+    doc.text('QTY/HRS', margin + 100, y + 8);
+    doc.text('PRICE/RATE', margin + 125, y + 8);
     doc.text('TOTAL', pageWidth - margin - 8, y + 8, { align: 'right' });
 
     y += 18;
@@ -745,10 +823,18 @@ function generatePDFModern(doc, data) {
             doc.rect(margin, y - 5, contentWidth, 10, 'F');
         }
 
-        const descLines = doc.splitTextToSize(item.description || 'Item', 90);
+        const descLines = doc.splitTextToSize(item.description || 'Item', 85);
         doc.text(descLines[0], margin + 8, y);
-        doc.text(item.quantity.toString(), margin + 105, y);
-        doc.text(formatCurrency(item.price), margin + 125, y);
+
+        if (item.isHourly) {
+            // Show hours and hourly rate
+            doc.text(item.hours.toString() + 'h', margin + 100, y);
+            doc.text(formatCurrency(item.hourlyRate) + '/hr', margin + 125, y);
+        } else {
+            // Show quantity and price
+            doc.text(item.quantity.toString(), margin + 100, y);
+            doc.text(formatCurrency(item.price), margin + 125, y);
+        }
         doc.setFont('helvetica', 'bold');
         doc.text(formatCurrency(item.total), pageWidth - margin - 8, y, { align: 'right' });
         doc.setFont('helvetica', 'normal');
@@ -960,8 +1046,8 @@ function generatePDFMinimal(doc, data) {
     doc.setTextColor(...mutedColor);
     doc.setFont('helvetica', 'normal');
     doc.text('Description', margin, y);
-    doc.text('Qty', margin + 95, y);
-    doc.text('Price', margin + 115, y);
+    doc.text('Qty/Hrs', margin + 90, y);
+    doc.text('Price/Rate', margin + 115, y);
     doc.text('Amount', pageWidth - margin, y, { align: 'right' });
 
     y += 3;
@@ -979,10 +1065,18 @@ function generatePDFMinimal(doc, data) {
             y = margin;
         }
 
-        const descLines = doc.splitTextToSize(item.description || 'Item', 85);
+        const descLines = doc.splitTextToSize(item.description || 'Item', 80);
         doc.text(descLines[0], margin, y);
-        doc.text(item.quantity.toString(), margin + 95, y);
-        doc.text(formatCurrency(item.price), margin + 115, y);
+
+        if (item.isHourly) {
+            // Show hours and hourly rate
+            doc.text(item.hours.toString() + 'h', margin + 90, y);
+            doc.text(formatCurrency(item.hourlyRate) + '/hr', margin + 115, y);
+        } else {
+            // Show quantity and price
+            doc.text(item.quantity.toString(), margin + 90, y);
+            doc.text(formatCurrency(item.price), margin + 115, y);
+        }
         doc.text(formatCurrency(item.total), pageWidth - margin, y, { align: 'right' });
 
         y += 8;
@@ -1074,12 +1168,21 @@ function gatherFormData() {
 
     itemElements.forEach(item => {
         const description = item.querySelector('.item-description').value;
+        const isHourly = item.dataset.hourly === 'true';
         const quantity = parseFloat(item.querySelector('.item-qty').value) || 0;
         const price = parseFloat(item.querySelector('.item-price').value) || 0;
-        const total = quantity * price;
+        const hours = parseFloat(item.querySelector('.item-hours').value) || 0;
+        const hourlyRate = parseFloat(item.querySelector('.item-rate').value) || 0;
 
-        if (description || quantity || price) {
-            items.push({ description, quantity, price, total });
+        let total;
+        if (isHourly) {
+            total = hours * hourlyRate;
+        } else {
+            total = quantity * price;
+        }
+
+        if (description || quantity || price || hours || hourlyRate) {
+            items.push({ description, quantity, price, hours, hourlyRate, isHourly, total });
             subtotal += total;
         }
     });
@@ -1322,7 +1425,14 @@ function loadTemplate(id) {
         lineItemCount = 0;
 
         data.items.forEach(item => {
-            addLineItem(item.description, item.quantity, item.price);
+            addLineItem(
+                item.description,
+                item.quantity,
+                item.price,
+                item.hours || 0,
+                item.hourlyRate || 0,
+                item.isHourly || false
+            );
         });
     }
 
