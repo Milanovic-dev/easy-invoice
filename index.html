@@ -208,6 +208,116 @@
                         </div>
                     </section>
 
+                    <!-- PDF Template Selection -->
+                    <section class="form-section template-selection-section">
+                        <div class="section-header">
+                            <span class="section-icon">🎨</span>
+                            <h2>Choose Template</h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="pdf-templates-grid">
+                                <!-- Classic Template -->
+                                <div class="pdf-template-card" data-template="classic">
+                                    <div class="template-preview">
+                                        <div class="preview-header classic-header">
+                                            <div class="preview-title-block">
+                                                <div class="preview-title">INVOICE</div>
+                                                <div class="preview-number">#INV-001</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-body">
+                                            <div class="preview-info-row">
+                                                <div class="preview-box"></div>
+                                                <div class="preview-box"></div>
+                                            </div>
+                                            <div class="preview-table">
+                                                <div class="preview-table-header classic-table-header"></div>
+                                                <div class="preview-table-row"></div>
+                                                <div class="preview-table-row"></div>
+                                            </div>
+                                            <div class="preview-total classic-total"></div>
+                                        </div>
+                                    </div>
+                                    <div class="template-info">
+                                        <span class="template-name">Classic</span>
+                                        <span class="template-desc">Clean & professional</span>
+                                    </div>
+                                    <div class="template-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Modern Template -->
+                                <div class="pdf-template-card" data-template="modern">
+                                    <div class="template-preview">
+                                        <div class="preview-header modern-header">
+                                            <div class="preview-title-block">
+                                                <div class="preview-title">INVOICE</div>
+                                                <div class="preview-number">#INV-001</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-body">
+                                            <div class="preview-info-row">
+                                                <div class="preview-box"></div>
+                                                <div class="preview-box"></div>
+                                            </div>
+                                            <div class="preview-table">
+                                                <div class="preview-table-header modern-table-header"></div>
+                                                <div class="preview-table-row"></div>
+                                                <div class="preview-table-row"></div>
+                                            </div>
+                                            <div class="preview-total modern-total"></div>
+                                        </div>
+                                    </div>
+                                    <div class="template-info">
+                                        <span class="template-name">Modern</span>
+                                        <span class="template-desc">Bold & contemporary</span>
+                                    </div>
+                                    <div class="template-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Minimal Template -->
+                                <div class="pdf-template-card" data-template="minimal">
+                                    <div class="template-preview">
+                                        <div class="preview-header minimal-header">
+                                            <div class="preview-title-block">
+                                                <div class="preview-title">INVOICE</div>
+                                                <div class="preview-number">#INV-001</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-body">
+                                            <div class="preview-info-row">
+                                                <div class="preview-box"></div>
+                                                <div class="preview-box"></div>
+                                            </div>
+                                            <div class="preview-table">
+                                                <div class="preview-table-header minimal-table-header"></div>
+                                                <div class="preview-table-row"></div>
+                                                <div class="preview-table-row"></div>
+                                            </div>
+                                            <div class="preview-total minimal-total"></div>
+                                        </div>
+                                    </div>
+                                    <div class="template-info">
+                                        <span class="template-name">Minimal</span>
+                                        <span class="template-desc">Simple & elegant</span>
+                                    </div>
+                                    <div class="template-check">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Generate Button -->
                     <div class="form-actions">
                         <button type="button" id="generate-pdf-btn" class="generate-btn" disabled>
@@ -219,7 +329,7 @@
                                         <line x1="12" y1="15" x2="12" y2="3"/>
                                     </svg>
                                 </span>
-                                <span>Generate PDF</span>
+                                <span>Download PDF</span>
                             </span>
                             <span class="btn-shimmer"></span>
                         </button>
@@ -250,6 +360,32 @@
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" id="modal-cancel">Cancel</button>
                 <button type="button" class="btn-save" id="modal-save">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div id="pdf-preview-modal" class="modal pdf-preview-modal">
+        <div class="modal-content pdf-preview-content">
+            <div class="modal-header">
+                <h3>PDF Preview - <span id="preview-template-name">Classic</span></h3>
+                <button type="button" class="modal-close" id="preview-modal-close">&times;</button>
+            </div>
+            <div class="modal-body pdf-preview-body">
+                <div id="pdf-preview-container" class="pdf-preview-container">
+                    <!-- PDF preview will be rendered here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="preview-modal-cancel">Close</button>
+                <button type="button" class="btn-save" id="preview-modal-download">
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; margin-right: 6px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PDF
+                </button>
             </div>
         </div>
     </div>
